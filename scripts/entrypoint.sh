@@ -26,7 +26,8 @@ for branch_name in $(git branch -r | grep -v '\->'); do
 
     # Sync branches
     conflict=""
-    git checkout $branch_name
+    git switch $branch_name
+    git pull origin $branch_name || conflict="$branch_name"
     git merge main --no-edit || conflict="$branch_name"
 
     # Set output variable for conflict
