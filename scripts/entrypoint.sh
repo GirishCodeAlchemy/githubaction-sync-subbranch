@@ -17,11 +17,11 @@ for branch in $(git branch -r | grep -v '\->'); do
     # Determine branch name
     branch_name=$(echo $branch | sed 's/origin\///')
 
-    # Check if branches are already in sync
-    if git merge-base --is-ancestor main $branch_name; then
-      echo "Branch $branch_name is already in sync with main. Nothing to merge."
-      continue
-    fi
+    # # Check if branches are already in sync
+    # if git merge-base --is-ancestor main $branch_name; then
+    #   echo "Branch $branch_name is already in sync with main. Nothing to merge."
+    #   continue
+    # fi
 
     # Sync branches
     conflict=""
@@ -39,14 +39,14 @@ for branch in $(git branch -r | grep -v '\->'); do
     # Send email notification on merge conflict
     if [ -n "$conflict" ]; then
       echo "Merge conflict in $conflict"
-      subject="Merge Conflict in $conflict"
+      # subject="Merge Conflict in $conflict"
 
-      # Send email notification
-      echo "There was a merge conflict when syncing the branch $conflict with main." | mail -s "$subject" $branch_owner
+      # # Send email notification
+      # echo "There was a merge conflict when syncing the branch $conflict with main." | mail -s "$subject" $branch_owner
     else
       echo "Merge successful in $branch_name"
-      subject="Merge Successful in $branch_name"
-      echo "The branch $branch_name was successfully synced with main." | mail -s "$subject" $branch_owner
+      # subject="Merge Successful in $branch_name"
+      # echo "The branch $branch_name was successfully synced with main." | mail -s "$subject" $branch_owner
     fi
   fi
 done
