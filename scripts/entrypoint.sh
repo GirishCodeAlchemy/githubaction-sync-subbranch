@@ -14,6 +14,11 @@ branch_name=$(git rev-parse --abbrev-ref HEAD)
 # Fetch all branches
 git fetch --all
 
+if git merge-base --is-ancestor main $branch_name; then
+  echo "Branches are already in sync. Nothing to merge."
+  exit 0
+fi
+
 # Sync branches
 conflict=""
 git checkout $branch_name
