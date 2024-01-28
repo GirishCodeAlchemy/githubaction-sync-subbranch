@@ -34,6 +34,8 @@ for branch in $(git branch -r | grep -v '\->'); do
     # Determine branch owner
     branch_owner=$(git log --format='%ae' -n 1 $branch_name)
 
+    echo "Branch owner: $branch_owner"
+
     # Send email notification on merge conflict
     if [ -n "$conflict" ]; then
       echo "Merge conflict in $conflict"
