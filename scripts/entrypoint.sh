@@ -3,6 +3,7 @@
 set -e
 echo "========GirishCodeAlchemy==========="
 
+# Set global Git configurations
 git config --global user.name "github-action-bot"
 git config --global user.email "github-action-bot@localhost"
 git config --global pull.ff only
@@ -11,44 +12,45 @@ git config --global --add safe.directory /github/workspace
 # Fetch all branches
 git fetch --all
 
-# Loop through all branches
+# Loop through all remote branches
 for branch_name in $(git branch -r | grep -v '\->'); do
-  if [ "$branch_name" != "origin/main" ] && [ "$branch_name" != "origin/master" ]; then
-    # Determine branch name
-    # branch_name=$(echo $branch | sed 's/origin\///')
-    echo "Syncing branch $branch_name"
+  # Extract local branch name from remote branch
+  local_branch_name=$(echo $branch_name | sed 's/origin\///')
 
-    # # Check if branches are already in sync
-    # if git merge-base --is-ancestor main $branch_name; then
-    #   echo "Branch $branch_name is already in sync with main. Nothing to merge."
-    #   continue
-    # fi
+  if [ "$local_branch_name" != "main" ] && [ "$local_branch_name" != "master" ]; then
+    echo "Syncing branch $local_branch_name"
+
+    # Check if branches are already in sync
+    if git merge-base --is-ancestor main $local_branch_name; then
+      echo "Branch $local_branch_name is already in sync with main. Nothing to merge."
+      continue
+    fi
 
     # Sync branches
     conflict=""
-    git switch $branch_name
-    git pull origin $branch_name || conflict="$branch_name"
-    git merge main --no-edit || conflict="$branch_name"
+    git switch -C $local_branch_name origin/$local_branch_name
+    git pull origin $local_branch_name || conflict="$local_branch_name"
+    git merge main --no-edit || conflict="$local_branch_name"
 
     # Set output variable for conflict
     echo "::set-output name=conflict::$conflict"
 
     # Determine branch owner
-    branch_owner=$(git log --format='%ae' -n 1 $branch_name)
+    branch_owner=$(git log --format='%ae' -n 1 $local_branch_name)
 
     echo "Branch owner: $branch_owner"
 
     # Send email notification on merge conflict
     if [ -n "$conflict" ]; then
       echo "Merge conflict in $conflict"
+      # Uncomment the following lines when you are ready to send emails
       # subject="Merge Conflict in $conflict"
-
-      # # Send email notification
       # echo "There was a merge conflict when syncing the branch $conflict with main." | mail -s "$subject" $branch_owner
     else
-      echo "Merge successful in $branch_name"
-      # subject="Merge Successful in $branch_name"
-      # echo "The branch $branch_name was successfully synced with main." | mail -s "$subject" $branch_owner
+      echo "Merge successful in $local_branch_name"
+      # Uncomment the following lines when you are ready to send emails
+      # subject="Merge Successful in $local_branch_name"
+      # echo "The branch $local_branch_name was successfully synced with main." | mail -s "$subject" $branch_owner
     fi
   fi
 done
