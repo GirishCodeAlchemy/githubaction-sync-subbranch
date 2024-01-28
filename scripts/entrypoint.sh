@@ -12,10 +12,11 @@ git config --global --add safe.directory /github/workspace
 git fetch --all
 
 # Loop through all branches
-for branch in $(git branch -r | grep -v '\->'); do
-  if [ "$branch" != "origin/main" ] && [ "$branch" != "origin/master" ]; then
+for branch_name in $(git branch -r | grep -v '\->'); do
+  if [ "$branch_name" != "origin/main" ] && [ "$branch_name" != "origin/master" ]; then
     # Determine branch name
-    branch_name=$(echo $branch | sed 's/origin\///')
+    # branch_name=$(echo $branch | sed 's/origin\///')
+    echo "Syncing branch $branch_name"
 
     # # Check if branches are already in sync
     # if git merge-base --is-ancestor main $branch_name; then
