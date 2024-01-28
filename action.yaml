@@ -2,8 +2,8 @@ name: "Sync SubBranches"
 author: "Girish V"
 description: 'Automatically sync branches and notify users about merge conflicts or successes.'
 branding:
-  icon: "https://github.com/GirishCodeAlchemy/GirishCodeAlchemy/blob/48e9c133950e09d23ae5b11b0ee40d41add0a507/logo.jpg"
-  color: 'blue'
+  icon: 'git-merge'
+  color: 'gray-dark'
 runs:
   using: "docker"
   image: "Dockerfile"

@@ -3,8 +3,8 @@
 set -e
 echo "========GirishCodeAlchemy==========="
 
-git config --global user.name "${GITHUB_ACTOR}"
-git config --global user.email "${GITHUB_ACTOR}@localhost"
+git config --global user.name "github-action-bot"
+git config --global user.email "github-action-bot@localhost"
 git config --global pull.ff only
 git config --global --add safe.directory /github/workspace
 
