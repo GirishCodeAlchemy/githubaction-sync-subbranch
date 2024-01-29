@@ -28,7 +28,8 @@ def sync_branches():
             subprocess.run(["git", "pull"])
             print(f"Syncing the changes from main to branch: {local_branch_name}")
             subprocess.run(["git", "branch"])
-
+            subprocess.run(["git", "rebase", "origin/main"])
+            print("Reabases command")
             # Merge changes from main to the branch
             conflict = ""
             subprocess.run(["git", "merge", "origin/main"])
