@@ -30,7 +30,11 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     conflict=""
     git switch -C $local_branch_name origin/$local_branch_name
     git pull origin $local_branch_name || conflict="$local_branch_name"
+    git status
+    echo "Syncing the changes from main to branch: $local_branch_name"
     git pull origin main --no-edit || conflict="$local_branch_name"
+    echo "get the status"
+    git status
     git push origin $local_branch_name || conflict="$local_branch_name"
 
     # Set output variable for conflict
