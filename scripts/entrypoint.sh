@@ -32,11 +32,13 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     # Sync branches
     conflict=""
     git checkout main
+    git remote -v
     git fetch origin
     git switch $local_branch_name
     git pull
     echo "Syncing the changes from main to branch: $local_branch_name"
     git branch
+    git remote -v
     echo "get the status--->"
     git status
     git merge origin/main || conflict="$local_branch_name"
