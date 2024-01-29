@@ -35,8 +35,10 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     git fetch origin main
     git branch
     git merge origin/main --no-edit --allow-unrelated-histories || conflict="$local_branch_name"
-    echo "get the status"
+    echo "get the status--->"
     git status
+    echo "get the diff--->"
+    git diff
     git push origin $local_branch_name || conflict="$local_branch_name"
 
     # Set output variable for conflict
