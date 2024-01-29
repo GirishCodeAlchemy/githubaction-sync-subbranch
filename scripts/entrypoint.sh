@@ -33,7 +33,7 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     git status
     echo "Syncing the changes from main to branch: $local_branch_name"
     git fetch origin main
-    git pull origin main --no-edit || conflict="$local_branch_name"
+    git pull origin main --allow-unrelated-histories --no-edit || conflict="$local_branch_name"
     echo "get the status"
     git status
     git push origin $local_branch_name || conflict="$local_branch_name"
