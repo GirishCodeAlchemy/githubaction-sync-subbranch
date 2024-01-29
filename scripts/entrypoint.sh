@@ -13,7 +13,7 @@ git config --global --add safe.directory /github/workspace
 
 ls -la /github/workspace
 ls -la
-python sync_branches.py
+python /app/sync_branches.py
 # # Fetch all branches
 # git fetch --all
 
