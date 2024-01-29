@@ -36,13 +36,12 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     echo "Syncing the changes from main to branch: $local_branch_name"
     git fetch origin main
     git branch
-    git rebase main || conflict="$local_branch_name"
+    git pull --rebase origin main
     echo "get the status--->"
     git status
     echo "get the diff--->"
     git diff
-    echo "get the config--->"
-    git config --list --show-origin
+
     git push origin $local_branch_name || conflict="$local_branch_name"
 
     # Set output variable for conflict
