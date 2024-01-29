@@ -21,8 +21,8 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     echo "Syncing branch $local_branch_name"
 
     # Check if branches are already in sync
-    if git merge-base --is-ancestor main $local_branch_name; then
-      echo "Branch $local_branch_name is already in sync with main. Nothing to merge."
+    if git merge-base --is-ancestor main $branch_name; then
+      echo "Branch $branch_name is already in sync with main. Nothing to merge."
       continue
     fi
 
@@ -30,7 +30,8 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     conflict=""
     git switch -C $local_branch_name origin/$local_branch_name
     git pull origin $local_branch_name || conflict="$local_branch_name"
-    git merge main --no-edit || conflict="$local_branch_name"
+    git pull origin main --no-edit || conflict="$local_branch_name"
+    git push origin $local_branch_name || conflict="$local_branch_name"
 
     # Set output variable for conflict
     echo "::set-output name=conflict::$conflict"
@@ -47,7 +48,7 @@ for branch_name in $(git branch -r | grep -v '\->'); do
       # subject="Merge Conflict in $conflict"
       # echo "There was a merge conflict when syncing the branch $conflict with main." | mail -s "$subject" $branch_owner
     else
-      echo "Merge successful in $local_branch_name"
+      echo "Merge successful in $branch_name"
       # Uncomment the following lines when you are ready to send emails
       # subject="Merge Successful in $local_branch_name"
       # echo "The branch $local_branch_name was successfully synced with main." | mail -s "$subject" $branch_owner
