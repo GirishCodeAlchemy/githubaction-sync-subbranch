@@ -4,7 +4,7 @@ import subprocess
 def sync_branches():
     # Fetch all branches
     subprocess.run(["git", "fetch", "--all"])
-
+    BASE_BRANCH = "main"
     # Loop through all remote branches
     branches = subprocess.check_output(["git", "branch", "-r"]).decode("utf-8").split('\n')
     for branch in branches:
@@ -21,52 +21,71 @@ def sync_branches():
                 print(f"Branch {branch} is already in sync with main. Nothing to merge.")
                 continue
 
-            # Sync branches
-            subprocess.run(["git", "checkout", "main"])
-            subprocess.run(["git", "fetch", "origin"])
-            subprocess.run(["git", "switch", local_branch_name])
-            subprocess.run(["git", "pull"])
-            print(f"Syncing the changes from main to branch: {local_branch_name}")
-            subprocess.run(["git", "branch"])
-            subprocess.run(["git", "rebase", "origin/main"])
-            print("Reabases command")
-            # Merge changes from main to the branch
-            conflict = ""
-            subprocess.run(["git", "merge", "origin/main"])
-            print("get the status--->")
-            subprocess.run(["git", "status"])
-            print("get the diff--->")
-            subprocess.run(["git", "diff"])
 
-            # Push changes to the branch
-            subprocess.run(["git", "push", "origin", local_branch_name])
+            # Make sure branches are up-to-date
+            subprocess.run(["git", "fetch", "origin", BASE_BRANCH])
+            subprocess.run(["git", "fetch", "fork", local_branch_name])
 
-            # Check for conflicts
-            if subprocess.run(["git", "status", "--porcelain"]).stdout:
-                conflict = local_branch_name
+            subprocess.run(["git", "checkout", "-b", f"fork/{local_branch_name}", f"fork/{local_branch_name}"])
 
-            # Set output variable for conflict
-            print(f"get the status--->{conflict}")
-            print("get the config--->")
-            subprocess.run(["git", "config", "--list", "--show-origin"])
+            subprocess.run(["git", "rebase", f"origin/{BASE_BRANCH}"])
 
-            # Determine branch owner
-            branch_owner = subprocess.check_output(["git", "log", "--format='%ae'", "-n", "1", local_branch_name]).decode("utf-8").strip()
-            print(f"Branch owner: {branch_owner}")
+            conflict_detected = subprocess.run(["git", "diff", "--name-only", "--diff-filter=U"]).returncode == 1
 
-            # Send email notification on merge conflict
-            if conflict:
-                print(f"Merge conflict in {conflict}")
-                # Uncomment the following lines when you are ready to send emails
-                # subject = f"Merge Conflict in {conflict}"
-                # body = f"There was a merge conflict when syncing the branch {conflict} with main."
-                # subprocess.run(["mail", "-s", subject, branch_owner], input=body.encode("utf-8"))
-            else:
-                print(f"Merge successful in {local_branch_name}")
-                # Uncomment the following lines when you are ready to send emails
-                # subject = f"Merge Successful in {local_branch_name}"
-                # body = f"The branch {local_branch_name} was successfully synced with main."
-                # subprocess.run(["mail", "-s", subject, branch_owner], input=body.encode("utf-8"))
+            if conflict_detected:
+                print("Conflict detected during rebase. Please resolve conflicts and continue.")
+                return
+
+            # Push back
+            subprocess.run(["git", "push", "--force-with-lease", "fork", f"fork/{local_branch_name}:{local_branch_name}"])
+
+
+            # # Sync branches
+            # subprocess.run(["git", "checkout", "main"])
+            # subprocess.run(["git", "fetch", "origin"])
+            # subprocess.run(["git", "switch", local_branch_name])
+            # subprocess.run(["git", "pull"])
+            # print(f"Syncing the changes from main to branch: {local_branch_name}")
+            # subprocess.run(["git", "branch"])
+            # subprocess.run(["git", "rebase", "origin/main"])
+            # print("Reabases command")
+            # # Merge changes from main to the branch
+            # conflict = ""
+            # subprocess.run(["git", "merge", "origin/main"])
+            # print("get the status--->")
+            # subprocess.run(["git", "status"])
+            # print("get the diff--->")
+            # subprocess.run(["git", "diff"])
+
+            # # Push changes to the branch
+            # subprocess.run(["git", "push", "origin", local_branch_name])
+
+            # # Check for conflicts
+            # if subprocess.run(["git", "status", "--porcelain"]).stdout:
+            #     conflict = local_branch_name
+
+            # # Set output variable for conflict
+            # print(f"get the status--->{conflict}")
+            # print("get the config--->")
+            # subprocess.run(["git", "config", "--list", "--show-origin"])
+
+            # # Determine branch owner
+            # branch_owner = subprocess.check_output(["git", "log", "--format='%ae'", "-n", "1", local_branch_name]).decode("utf-8").strip()
+            # print(f"Branch owner: {branch_owner}")
+
+            # # Send email notification on merge conflict
+            # if conflict:
+            #     print(f"Merge conflict in {conflict}")
+            #     # Uncomment the following lines when you are ready to send emails
+            #     # subject = f"Merge Conflict in {conflict}"
+            #     # body = f"There was a merge conflict when syncing the branch {conflict} with main."
+            #     # subprocess.run(["mail", "-s", subject, branch_owner], input=body.encode("utf-8"))
+            # else:
+            #     print(f"Merge successful in {local_branch_name}")
+            #     # Uncomment the following lines when you are ready to send emails
+            #     # subject = f"Merge Successful in {local_branch_name}"
+            #     # body = f"The branch {local_branch_name} was successfully synced with main."
+            #     # subprocess.run(["mail", "-s", subject, branch_owner], input=body.encode("utf-8"))
 
 
 if __name__ == "__main__":
