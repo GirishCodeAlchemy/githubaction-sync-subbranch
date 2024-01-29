@@ -39,6 +39,8 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     git status
     echo "get the diff--->"
     git diff
+    echo "get the config--->"
+    git config --list --show-origin
     git push origin $local_branch_name || conflict="$local_branch_name"
 
     # Set output variable for conflict
