@@ -6,7 +6,7 @@ echo "========GirishCodeAlchemy==========="
 # Set global Git configurations
 git config --global user.name "github-action-bot"
 git config --global user.email "github-action-bot@localhost"
-git config --global pull.rebase false
+git config --global pull.ff only
 git config --global --add safe.directory /github/workspace
 
 # Fetch all branches
@@ -33,7 +33,7 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     git status
     echo "Syncing the changes from main to branch: $local_branch_name"
     git fetch origin main
-    git pull origin main --allow-unrelated-histories --no-edit || conflict="$local_branch_name"
+    git merge origin/main --no-edit --allow-unrelated-histories || conflict="$local_branch_name"
     echo "get the status"
     git status
     git push origin $local_branch_name || conflict="$local_branch_name"
