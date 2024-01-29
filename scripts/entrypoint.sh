@@ -9,7 +9,7 @@ git config --global user.email "github-action-bot@localhost"
 git config --global pull.rebase false
 git config --global push.default tracking
 
-# git config --global --add safe.directory /github/workspace
+git config --global --add safe.directory /github/workspace
 
 # Fetch all branches
 git fetch --all
