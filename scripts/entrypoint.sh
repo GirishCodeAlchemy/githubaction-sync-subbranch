@@ -31,7 +31,7 @@ for branch_name in $(git branch -r | grep -v '\->'); do
     # Sync branches
     conflict=""
     git switch $local_branch_name
-    git pull origin $local_branch_name || conflict="$local_branch_name"
+    git pull --rebase origin $local_branch_name || conflict="$local_branch_name"
     git status
     echo "Syncing the changes from main to branch: $local_branch_name"
     git fetch origin main
