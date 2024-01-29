@@ -30,18 +30,19 @@ for branch_name in $(git branch -r | grep -v '\->'); do
 
     # Sync branches
     conflict=""
+    git checkout main
+    git fetch origin
     git switch $local_branch_name
-    git pull --rebase origin $local_branch_name || conflict="$local_branch_name"
-    git status
+    git pull
     echo "Syncing the changes from main to branch: $local_branch_name"
-    git fetch origin main
     git branch
-    git pull --rebase origin main
+    echo "get the status--->"
+    git status
+    git merge origin/main || conflict="$local_branch_name"
     echo "get the status--->"
     git status
     echo "get the diff--->"
     git diff
-
     git push origin $local_branch_name || conflict="$local_branch_name"
 
     # Set output variable for conflict
